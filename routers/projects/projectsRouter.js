@@ -87,4 +87,37 @@ router.post("/:id/tasks", async (req, res) => {
   }
 });
 
+router.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  const projData = req.body;
+
+  if (projData.name) {
+    try {
+      const updated = await Proj.update(projData, id);
+
+      res.status(200).json(updated);
+    } catch (err) {
+      res.status(500).json({ errorMessage: err.message });
+    }
+  } else {
+    res.status(400).json({ errorMessage: "Missing name field" });
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const deletedProj = await Proj.remove(id);
+
+    if (deletedProj) {
+      res.status(200).json(deletedProj);
+    } else {
+      res.status(404).json({ errorMessage: "Invalid project ID" });
+    }
+  } catch (err) {
+    res.status(500).json({ errorMessage: err.message });
+  }
+});
+
 module.exports = router;

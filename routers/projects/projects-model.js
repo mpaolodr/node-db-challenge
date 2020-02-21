@@ -61,11 +61,38 @@ function addTask(data, id) {
     });
 }
 
+function update(data, id) {
+  return db("projects")
+    .where({ id })
+    .update(data)
+    .then(update => {
+      return db("projects")
+        .where({ id })
+        .first();
+    });
+}
+
+function remove(id) {
+  return db("projects")
+    .where({ id })
+    .first()
+    .then(toDelete => {
+      return db("projects")
+        .where({ id })
+        .del()
+        .then(deleted => {
+          return toDelete;
+        });
+    });
+}
+
 module.exports = {
   get,
   getById,
   getTasks,
   add,
   addTask,
-  getTasksForProject
+  getTasksForProject,
+  update,
+  remove
 };
