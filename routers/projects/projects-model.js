@@ -4,6 +4,12 @@ function get() {
   return db("projects");
 }
 
+function getById(id) {
+  return db("projects")
+    .where({ id })
+    .first();
+}
+
 function getTasks(id) {
   return db("projects")
     .where({ id })
@@ -21,6 +27,13 @@ function getTasks(id) {
           .where("t.project_id", id);
       }
     });
+}
+
+function getTasksForProject(id) {
+  return db("tasks as t")
+    .join("projects as p", "t.project_id", "p.id")
+    .select("t.id", "t.description", "t.notes", "t.completed")
+    .where({ "t.project_id": id });
 }
 
 function add(data) {
@@ -50,7 +63,9 @@ function addTask(data, id) {
 
 module.exports = {
   get,
+  getById,
   getTasks,
   add,
-  addTask
+  addTask,
+  getTasksForProject
 };

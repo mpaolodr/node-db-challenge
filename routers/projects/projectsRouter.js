@@ -1,11 +1,40 @@
 const router = require("express").Router();
 
 const Proj = require("./projects-model.js");
+const Res = require("../resources/resources-model.js");
 
 router.get("/", async (req, res) => {
   try {
     const projects = await Proj.get();
     res.status(200).json(projects);
+  } catch (err) {
+    res.status(500).json({ errorMessage: err.message });
+  }
+});
+
+router.get("/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const project = await Proj.getById(id);
+    const tasks = await Proj.getTasksForProject(id);
+    const resources = await Res.getProjectResources(id);
+
+    if (project) {
+      res.status(200).json({
+        ...project,
+        completed: project.completed ? true : false,
+        tasks: tasks.map(task => {
+          return {
+            ...task,
+            completed: task.completed ? true : false
+          };
+        }),
+        resources: resources
+      });
+    } else {
+      res.status(404).json({ errorMessage: "Invalid Project ID" });
+    }
   } catch (err) {
     res.status(500).json({ errorMessage: err.message });
   }

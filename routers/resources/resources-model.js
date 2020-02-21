@@ -14,7 +14,15 @@ function add(data) {
     });
 }
 
+function getProjectResources(id) {
+  return db("project_resources as pr")
+    .join("resources as r", "pr.resource_id", "r.id")
+    .select("r.*")
+    .where("pr.project_id", id);
+}
+
 module.exports = {
   get,
-  add
+  add,
+  getProjectResources
 };
