@@ -21,8 +21,35 @@ function getProjectResources(id) {
     .where("pr.project_id", id);
 }
 
+function update(data, id) {
+  return db("resources")
+    .where({ id })
+    .update(data)
+    .then(updated => {
+      return db("resources")
+        .where({ id })
+        .first();
+    });
+}
+
+function remove(id) {
+  return db("resources")
+    .where({ id })
+    .first()
+    .then(resource => {
+      return db("resources")
+        .where({ id })
+        .del()
+        .then(deleted => {
+          return resource;
+        });
+    });
+}
+
 module.exports = {
   get,
   add,
-  getProjectResources
+  getProjectResources,
+  update,
+  remove
 };
